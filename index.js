@@ -29,7 +29,7 @@ async function startApp () {
         ]) .then(function (res) {
                 switch (res.likeToDo) {
                     case "View All Employees":
-                        viewAll('SELECT * FROM employees').then(results => {
+                        viewAll('SELECT employees.id AS "Employee ID", employees.first_name AS "First Name", employees.last_name AS "Last Name", roles.title AS "Job Title", departments.name AS "Department", roles.salary AS "Salary", CONCAT(e.first_name," ",e.last_name) AS "Manager" FROM employees LEFT JOIN employees AS e ON employees.manager_id = e.id JOIN (roles JOIN departments ON roles.department_id = departments.id) ON employees.role_id = roles.id').then(results => {
                             console.table(results);
                             startApp();
                         });                        
@@ -41,7 +41,7 @@ async function startApp () {
                         updateEmp();
                         break;
                     case "View All Roles":
-                        viewAll('SELECT * FROM roles').then(results => {
+                        viewAll('SELECT roles.id AS "Role ID", roles.title AS "Job Title", d.name AS "Department", roles.salary AS "Salary" FROM roles JOIN departments AS d ON roles.department_id  = d.id').then(results => {
                             console.table(results);
                             startApp();
                         });
@@ -50,7 +50,7 @@ async function startApp () {
                         newRole();
                         break;
                     case "View All Departments":
-                        viewAll('SELECT * FROM departments').then(results => {
+                        viewAll('SELECT id AS "Department ID", name AS "Department Name" FROM departments').then(results => {
                             console.table(results);
                             startApp();
                         });
