@@ -181,13 +181,13 @@ function newDep () {
 async function updateEmp () {
     const employees = await viewAll('SELECT id AS value, first_name, last_name FROM employees');
     const empChoices = employees.map(function (el) {
-        return el.name;
+        const fullName = el.first_name + ' ' + el.last_name;
+        return fullName;
     });
     const roles = await viewAll('SELECT id AS value, title FROM roles');
     const roleChoices = roles.map(function (el) {
         return el.title;
     });
-
 
     inquirer.prompt(
         [
@@ -204,7 +204,14 @@ async function updateEmp () {
                 choices: roleChoices
             }
         ]) .then(function (res) {
-
+                const empId = employees.filter(function (subject) {
+                    if(res.chosenEmp == subject.first_name + ' ' + subject.last_name) return subject;
+                });
+                const roleId = roles.filter(function (subjectA) {
+                    if(res.chosenRole == subjectA.title) return subjectA;
+                });
+                console.log(`Changed ${res.chosenEmp}'s role to ${res.chosenRole}`);
+                db.query(`UPDATE employees SET role_id = ${roleId[0].value} WHERE id = ${empId[0].value}`);
                 startApp();
             })
 }
